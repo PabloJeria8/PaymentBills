@@ -3,6 +3,8 @@ package cl.empresapjm.paymentbills.views;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import cl.empresapjm.paymentbills.R;
 import cl.empresapjm.paymentbills.models.Payment;
@@ -12,7 +14,14 @@ public class DetailActivity extends AppCompatActivity {
     private Payment payment;
     private EditText description;
     private EditText amounth;
-    private EditText kind;
+    private String kind;
+
+    private RadioGroup selectRole;
+    private RadioButton btnS;
+    private RadioButton btnB;
+    private RadioButton btnO;
+
+
 /*    RadioGroup rg;
     RadioGroup radgroup_opcionesEventos = null;*/
 
@@ -26,17 +35,6 @@ public class DetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle(payment.getPeriodP());
 
-/*        RadioGroup rg = (RadioGroup) findViewById(R.id.radioGroup1);
-        final String value =
-                ((RadioButton)findViewById(rg.getCheckedRadioButtonId()))
-                        .getText().toString();
-
-        rg.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                (EditText) kind = (EditText) value;
-            }
-        });*/
-
         description = (EditText) findViewById(R.id.descriptionEt);
         amounth = (EditText) findViewById(R.id.amounthEt);
 
@@ -45,15 +43,12 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
 
-/*        radgroup_opcionesEventos.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = (RadioButton) group.findViewById(checkedId);
-                String mySelectedIndex = radioButton.getTag().toString();
-            }
-        });*/
-
         super.onResume();
+
+        selectRole = (RadioGroup) findViewById(R.id.radioGroup1);
+        btnS =  (RadioButton) findViewById(R.id.serviceRb);
+        btnB =  (RadioButton) findViewById(R.id.bankRb);
+        btnO =  (RadioButton) findViewById(R.id.otherRb);
 
         if (payment.getDescription() != null){
             description.setText(payment.getDescription());
@@ -63,13 +58,38 @@ public class DetailActivity extends AppCompatActivity {
             amounth.setText(payment.getAmount());
         }
 
+        if (payment.getKind() != null){
+            String kind = payment.getKind().toString();
+
+            if(kind.equals(btnS.getText().toString())){
+                btnS.setChecked(true);
+            }
+
+            if(kind.equals(btnB.getText().toString())){
+                btnB.setChecked(true);
+            }
+
+            if(kind.equals(btnO.getText().toString())){
+                btnO.setChecked(true);
+            }
+        }
+
     }
+
 
     @Override
     protected void onPause() {
         super.onPause();
+
+        selectRole = (RadioGroup) findViewById(R.id.radioGroup1);
+        int selectedId = selectRole.getCheckedRadioButtonId();
+        btnS = (RadioButton) findViewById(selectedId);
+
+        String kind = btnS.getText().toString();
+
         payment.setDescription(description.getText().toString());
         payment.setAmount(amounth.getText().toString());
+        payment.setKind(kind.toString());
         payment.save();
     }
 
